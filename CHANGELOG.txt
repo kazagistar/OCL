@@ -1,0 +1,26 @@
+OCL 0.4 CHANGELOG
+
+-Added support for OSs to have custom shells.
+-Added an OCL shell that should be installed by users for the above functionality to work. Defaults to ComputerCraft shell behaviour unless there is a custom one to load.
+-Added function OCL.hasCustomShell() which is mainly used by the new OCL user shell to load the OS's custom shell, provided there is one.
+-Added a program stack to the OCL, so it can keep track of the running programs that are registered with the OCL (programs must be registered using OCL.addToStack() if OCL.run() wasn't used).
+-Added functions: OCL.getAppsDir(), OCL.clearCache(), OCL.addToStack(), OCL.getRunningProgram(), OCL.getLogFile() and OCL.logToFile().
+-Fixed function OCL.exitProgram() so it actually works now.
+-Modified function OCL.run() to incorporate the program stack functionality.
+-Added an edition of OCL for CraftOS (default ComputerCraft OS), as it occurs to me that it is needed for programs written with OCL to function in CraftOS.
+-README file updated.
+
+OCL 0.3 CHANGELOG
+
+-Removed the "OCL." prefix to internal function calls, as they were not required.
+-Removed the extra 0 in the version number, to make it look a bit more tidy.
+-Changed the README and CHANGELOG to .txt format, for easier reading.
+
+OCL 0.2 CHANGELOG
+
+-Added a variable and associated function that distinguishes what version of an OS the OCL is for.
+-Added a function that checks that the loaded version of the OCL is at least as up-to-date as a given version, useful for a program to check that the OCL supports the standard the program is written to.
+-Changed the OCL version system to feature just one decimal point, as any more than that causes it to encounter errors.
+-Moved the definitions of key variables from the API body to directly inside functions, as they were blocking the functions.
+-Re-arranged the organisation of appdata and user directory functions for the defaults.
+-Added functions: OCL.getUsername(), OCL.getUserDir(), OCL.deployApp(), OCL.isCompatible() and OCL.platVersion().

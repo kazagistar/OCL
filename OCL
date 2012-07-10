@@ -1,0 +1,196 @@
+--Copyright (C) 2012 Toxic Wolf <toxic.wolf@hotmail.co.uk>. 
+
+--[[
+[ComputerCraft Operating System Compatibility Layer] - CraftOS PLATFORM
+'OCL'
+]]--
+
+local programStack = {}
+
+--OCL.version() - returns the version number of OCL that is loaded.
+function version()
+	return 0.4 --This number indicates the OCL version, please check to make sure your OS's edition of the OCL complies with and is equal to the same version of the template OCL.
+end
+
+--OCL.platform() - returns the platform that the loaded edition of OCL is for.
+function platform()
+	return "CraftOS" --Change this to a suitable identifier for your Operating System.
+end
+
+--OCL.platVersion()
+function platVersion()
+	return 1.33 --This number indicates which version of your OS this edition of OCL is for. Useful when you have changed features in a newer version of your OS.
+end
+
+--OCL.hasCustomShell() - returns true if your OS has a custom shell. The second value should be the path to where the shell file is saved in string format.
+function hasCustomShell()
+	return false, nil --Change this only if your OS has a custom shell.
+end
+
+--OCL.info() - returns information on the loaded edition of OCL. Configure the returned string as required.
+function info()
+	return "This is version " .. version() .. " of the OCL for version " .. platVersion() .. " of the " .. platform() .. " platform."
+end
+
+--OCL.isCompatible(version) - used to make sure that the loaded version of OCL is up-to-date enough for the running program, where 'version' is the minimum version that the program needs to work.
+function isCompatible(version)
+	if version() >= version then
+		return true
+	end
+	return false
+end
+
+--OCL.nPrint(text) - used to perform a standard print.
+function nPrint(text)
+	print(text) --Insert custom printing logic.
+end
+
+--OCL.iPrint(text) - used to perform an instant print; useful for Operating Systems that by default print slowly. By default points to OCL.nPrint().
+function iPrint(text)
+	nPrint(text) --Default behaviour, change only if necessary to your OS.
+end
+
+--OCL.nWrite(text) - same as nPrint() above, only for the standard write() function.
+function nWrite(text)
+	write(text) --Insert custom writing logic.
+end
+
+--OCL.iWrite(text) - same as iPrint() above, only for the standard write() function.
+function iWrite(text)
+	nWrite(text) --Default behaviour, change only if necessary to your OS.
+end
+
+--OCL.addToStack(path) - adds the program 'path' to the program stack. Useful for registering programs not initiated with OCL.run() as active with the OCL program stack.
+function addToStack(path)
+	if fs.exists(path) then
+		programStack[#programStack + 1] = path
+		return true
+	end
+	return false
+end
+
+--OCL.run(path) - will keep track of running programs, and will return true/false depending if the program completed or not, which is the same behaviour as shell.run().
+function run(path)
+	if addToStack(path) then
+		local result = os.run({}, path)
+		programStack[#programStack] = nil
+		return result
+	end
+	return false
+end
+
+--OCL.getRunningProgram() - returns the path of the current program. Useful for your OS to call this to get the current program calling these functions.
+function getRunningProgram()
+	if #programStack > 0 then
+		return programStack[#programStack]
+	end
+	return nil
+end
+
+--OCL.exitProgram() - requests to end the current program. Must actually be used like 'OCL.exitProgram()()' to work.
+function exitProgram()
+	return function() return nil end
+end
+
+--OCL.getUsername() - if your OS has a user structure, then this returns a string of their name or ID. If not, returning nil is suggested.
+function getUsername()
+	return nil --Example output, configure the returned string as required.
+end
+
+--OCL.getRoot() - returns the root directory of your Operating System.
+function getRoot()
+	return "/" --Example directory; configure the returned string as required.
+end
+
+--OCL.getUserDir() - returns the personal directory of the currently logged-in user, if your OS features multi-user capabilities.
+function getUserDir()
+	if getUsername() then
+		return getRoot() .. getUsername() .. "/" -- Example directory, configure the returned string as required.
+	end
+	return getRoot() .. "documents/" --For non multi-user systems, configure the returned string as required.
+end
+
+--OCL.getAppsDir() - returns the directory where all programs are installed to.
+function getAppsDir()
+	return getRoot() .. "programs/" --Example directory, configure the returned string as required.
+end
+
+--OCL.getTemp(programName) - returns the directory where all temporary appdata for the current program should be stored.
+--This appdata should be removed upon shutdown/boot.
+function getTemp(programName)
+	return getRoot .. "appdata/temp/" .. programName .. "/" --Example directory, configure the returned string as required.
+end
+
+--OCL.getData(programName) - returns the directory where all long-term appdata fo the current program should be stored.
+--It is system-wide, OCL.getLocal() should be used for the user-specific appdata directory.
+function getData(programName)
+	return getRoot() .. "appdata/" .. programName .. "/" --Example directory, configure the returned string as required.
+end
+
+--OCL.getLocal(programName) - returns the directory where all user-specific appdata for the current program should be stored.
+function getLocal(programName)
+	return getUserDir() .. "appdata/" .. programName .. "/" --Example directory, configure the returned string as required.
+end
+
+--OCL.testApp(programName) - returns true if the appdata directories for the current program exist.
+function testApp(programName)
+	if fs.exists(getData(programName)) and fs.exists(getTemp(programName)) and fs.exists(getLocal(programName)) then --Insert custom checking logic.
+		return true
+	end
+	return false
+end
+
+--OCL.deployApp(programName) - creates any missing appdata directories for the current program - not much editing should be required here, if any as it mostly just points to previous functions.
+function deployApp(programName)
+	if not fs.exists(getTemp(programName)) then
+		fs.makeDir(getTemp(programName))
+	end
+	if not fs.exists(getData(programName)) then
+		fs.makeDir(getData(programName))
+	end
+	if not fs.exists(getLocal(programName)) then
+		fs.makeDir(getLocal(programName))
+	end
+end
+
+--OCL.removeApp(programName) - use this to handle deletion of all appdata, and uninstallation of the program.
+function removeApp(programName)
+	fs.delete(getAppsDir() .. programName) --Insert custom removal logic.
+	fs.delete(getData(programName))
+	fs.delete(getLocal(programName))
+end
+
+--OCL.getLogFile() - returns the path of the log file.
+function getLogFile()
+	return getRoot() .. "cache/log.txt" --Example directory, configure the returned string as required.
+end
+
+--OCL.logToFile(text) - use this to log important or debug information to file.
+function logToFile(text)
+	local logFile = io.open(getLogFile(), "a")
+	logFile:write(text)
+	logFile:close()
+end
+
+--OCL.clearCache() - removes all temporary appdata and empties the log file. This function should be called upon shutdown/boot. No editing should be required here.
+function clearCache()
+	local logFile = io.open(getLogFile(), "w")
+	logFile:write("")
+	logFile:close()
+	local tDirs = fs.list(getTemp(""))
+	for n = 1, #tDirs do
+		fs.delete(getTemp(tDirs[n]))
+	end
+end
+
+--OCL.shutdown()
+function shutdown()
+	clearCache()
+	os.shutdown() --Insert custom shutdown logic.
+end
+
+--OCL.reboot()
+function reboot()
+	clearCache()
+	os.reboot() --Insert custom reboot logic.
+end
