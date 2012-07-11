@@ -9,6 +9,8 @@ if fs.exists("/OCL/OCL") then
 			os.shutdown() --Just in case
 		end
 	end
+elseif not fs.exists("/rom/apis/OCL") then
+	error("No OCL version found for the CraftOS platform! Please reinstall the OCL.")
 end
 
 --Default ComputerCraft shell follows in case of no custom shell, or no OCL compatible OS loaded.
