@@ -40,24 +40,26 @@ function isCompatible(version)
 	return false
 end
 
---OCL.nPrint(text) - used to perform a standard print.
-function nPrint(text)
+--OCL.nPrint(text, x, y) - used to perform a standard print.
+function nPrint(text, x, y)
+	term.setCursorPos(x, y)
 	print(text) --Insert custom printing logic.
 end
 
 --OCL.iPrint(text) - used to perform an instant print; useful for Operating Systems that by default print slowly. By default points to OCL.nPrint().
-function iPrint(text)
-	nPrint(text) --Default behaviour, change only if necessary to your OS.
+function iPrint(text, x, y)
+	nPrint(text, x, y) --Default behaviour, change only if necessary to your OS.
 end
 
 --OCL.nWrite(text) - same as nPrint() above, only for the standard write() function.
-function nWrite(text)
+function nWrite(text, x, y)
+	term.setCursorPos(x, y)
 	write(text) --Insert custom writing logic.
 end
 
 --OCL.iWrite(text) - same as iPrint() above, only for the standard write() function.
-function iWrite(text)
-	nWrite(text) --Default behaviour, change only if necessary to your OS.
+function iWrite(text, x, y)
+	nWrite(text, x, y) --Default behaviour, change only if necessary to your OS.
 end
 
 --OCL.addToStack(path) - adds the program 'path' to the program stack. Useful for registering programs not initiated with OCL.run() as active with the OCL program stack.
