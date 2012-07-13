@@ -1,4 +1,4 @@
---OCL 0.5 custom BIOS. Copyright (C) 2012 James Chapman <toxic.wolf@hotmail.co.uk>
+--OCL 0.5 custom BIOS. Do whatever you want with it, no rights reserved, as per WTFPL (http://sam.zoy.org/wtfpl/COPYING)
 local nVersion = 0.5
 
 function write(sString)

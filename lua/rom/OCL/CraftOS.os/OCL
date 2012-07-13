@@ -1,8 +1,7 @@
---Copyright (C) 2012 Toxic Wolf <toxic.wolf@hotmail.co.uk>. 
-
 --[[
 [ComputerCraft Operating System Compatibility Layer] - CraftOS PLATFORM
 'OCL'
+Do whatever you want with it, no rights reserved, as per WTFPL (http://sam.zoy.org/wtfpl/COPYING)
 ]]--
 
 local programStack = {}
