@@ -1,0 +1,41 @@
+--OCL 0.5 Loader. Copyright (C) 2012 James Chapman <toxic.wolf@hotmail.co.uk>
+local sVersion = "0.5" --In string format to retain decimal point and second digit with version numbers that are integers
+
+local tOSs = {}
+local tTemp = fs.list("/OCL")
+for n = 1, #tTemp do
+	if string.sub(tTemp[n], #tTemp[n] - 2) == ".os" then
+		tOSs[#tOSs + 1] = "/OCL/" .. tTemp[n]
+	end
+	if #tOSs == 8 then break end
+end
+tOSs[#tOSs + 1] = "/rom/OCL/CraftOS.os"
+
+local nWidth = term.getSize()
+term.clear()
+term.setCursorPos(math.floor(nWidth / 2) - math.floor(string.len("OCL " .. sVersion .. " Boot Setup") / 2) + 1, 1)
+print("OCL " .. sVersion .. " Boot Setup")
+print()
+for n = 1, #tOSs - 1 do
+	print(n .. ". " .. string.sub(tOSs[n], 6, #tOSs[n] - 3))
+end
+print(#tOSs .. ". " .. string.sub(tOSs[#tOSs], 10, #tOSs[#tOSs] - 3))
+print()
+write("Enter OS number to boot:  ")
+term.setCursorBlink(true)
+local sEvent, p1 = nil
+repeat
+	sEvent, p1 = coroutine.yield()
+until sEvent == "char" and tonumber(p1) <= #tOSs
+term.setCursorBlink(false)
+
+local hFile = fs.open("/OCL/current_os", "w")
+hFile.write(tOSs[tonumber(p1)] .. "/bios")
+hFile.close()
+term.clear()
+term.setCursorPos(1, 1)
+local bSuccess, sError = boot(tOSs[tonumber(p1)] .. "/bios")
+if not bSuccess then
+	error(sError)
+end
+os.shutdown()
