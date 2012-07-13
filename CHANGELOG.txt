@@ -1,3 +1,12 @@
+OCL 0.5 CHANGELOG
+
+-Removed need for custom shell.
+-Added a custom bios.lua file.
+-Added a loader, which chan be used to select which currently installed OS to load. It can be accessed by pressing the F1 key upon boot.
+-Moved CraftOS BIOS and OCL file to //rom/OCL/CraftOS.os/ directory.
+-Compatible OSs can now have their own custom BIOS and shell files, launched through the loader.
+-This just briefly sums up all the changes, for more in-depth details please see the OCL's ComputerCraft forums page, or the OCL Wiki on GitHub (still under development).
+
 OCL 0.4 CHANGELOG
 
 -Added support for OSs to have custom shells.
