@@ -396,6 +396,8 @@ if turtle then
 	end
 end
 
+os.loadAPI("rom/OCL/CraftOS.os/OCL")
+
 -- Run the shell
 local ok, err = pcall( function()
 	parallel.waitForAny(
